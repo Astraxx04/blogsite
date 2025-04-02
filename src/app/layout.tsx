@@ -1,5 +1,4 @@
 import Footer from "@/app/_components/footer";
-import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import cn from "classnames";
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
   title: `Insights Repo`,
   description: `A developer's take on building, breaking, and learning through code.`,
   openGraph: {
-    images: [HOME_OG_IMAGE_URL],
+    images: ["../../public/assets/constants/spider-kid.jpg"],
   },
 };
 
@@ -58,7 +57,7 @@ export default function RootLayout({
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
       <body
-        className={cn(inter.className, "dark:bg-slate-900 dark:text-slate-400")}
+        className={cn(inter.className, "dark:bg-stone-950 dark:text-slate-300")}
       >
         <ThemeSwitcher />
         <div className="min-h-screen">{children}</div>

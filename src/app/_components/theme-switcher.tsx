@@ -77,6 +77,7 @@ const Switch = () => {
     localStorage.setItem(STORAGE_KEY, mode);
     updateDOM();
   }, [mode]);
+  
 
   /** toggle mode */
   const handleModeSwitch = () => {
