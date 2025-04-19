@@ -1,5 +1,6 @@
 ---
 title: "Dockerizing MERN Applications"
+postKey: "post-3"
 excerpt: "\"It's working on my system\" is a common phrase used by many programmers who encounter issues when trying to run their code on different machines. Docker is a tool that addresses this problem."
 coverImage: "/assets/blog/dockerizing-mern/cover.png"
 date: "2024-01-13T10:00:00.000Z"
