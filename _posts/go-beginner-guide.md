@@ -1,5 +1,6 @@
 ---
 title: "Beginner's guide to Go"
+postKey: "post-2"
 excerpt: "Go, commonly known as GoLang, is a modern statically typed programming language developed by Google that emphasizes simplicity, efficiency, and concurrency."
 coverImage: "/assets/blog/go-beginner-guide/cover.png"
 date: "2024-04-16T10:00:00.000Z"
