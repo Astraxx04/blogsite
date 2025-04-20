@@ -19,9 +19,13 @@ import {
 
 type Props = {
     postKey: string;
+    isValidPage: boolean;
 };
 
-export default function PostAnalytics({ postKey }: Props) {
+const env = process.env.NEXT_PUBLIC_ENV || "dev";
+const collectionName = env === "dev" ? "posts-dev" : "posts-prod";
+
+export default function PostAnalytics({ postKey, isValidPage }: Props) {
     const [readCount, setReadCount] = useState<number>(0);
     const [likesCount, setLikesCount] = useState<number>(0);
     const [unlikesCount, setUnlikesCount] = useState<number>(0);
@@ -40,7 +44,7 @@ export default function PostAnalytics({ postKey }: Props) {
             const hashedIp = await hashIp(ipAddress);
             setUserIpHash(hashedIp);
 
-            const postDocRef = doc(db, 'posts', postKey);
+            const postDocRef = doc(db, collectionName, postKey);
             const postDoc = await getDoc(postDocRef);
 
             if (postDoc.exists()) {
@@ -56,7 +60,7 @@ export default function PostAnalytics({ postKey }: Props) {
                     setUserAction('unlike');
                 }
 
-                if (!data.visitedBy?.includes(hashedIp)) {
+                if (isValidPage && !data.visitedBy?.includes(hashedIp)) {
                     await updateDoc(postDocRef, {
                         readCount: increment(1),
                         visitedBy: arrayUnion(hashedIp),
@@ -64,13 +68,15 @@ export default function PostAnalytics({ postKey }: Props) {
                     setReadCount((prev) => prev + 1);
                 }
             } else {
-                await setDoc(postDocRef, {
-                    readCount: 1,
-                    likedBy: [],
-                    unlikedBy: [],
-                    visitedBy: [hashedIp],
-                });
-                setReadCount(1);
+                if (isValidPage) {
+                    await setDoc(postDocRef, {
+                        readCount: 1,
+                        likedBy: [],
+                        unlikedBy: [],
+                        visitedBy: [hashedIp],
+                    });
+                    setReadCount(1);
+                }
             }
             console.log('Read count: ', readCount);
         } catch (error) {
@@ -95,7 +101,7 @@ export default function PostAnalytics({ postKey }: Props) {
 
     const handleLike = async () => {
         try {
-            const postDocRef = doc(db, 'posts', postKey);
+            const postDocRef = doc(db, collectionName, postKey);
 
             if (userAction === 'like') {
                 await updateDoc(postDocRef, {
@@ -120,7 +126,7 @@ export default function PostAnalytics({ postKey }: Props) {
 
     const handleUnlike = async () => {
         try {
-            const postDocRef = doc(db, 'posts', postKey);
+            const postDocRef = doc(db, collectionName, postKey);
 
             if (userAction === 'unlike') {
                 await updateDoc(postDocRef, {
