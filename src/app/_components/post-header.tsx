@@ -30,7 +30,7 @@ export function PostHeader({
                 <DateFormatter dateString={date} />
             </div>
             <div className="mb-6 text-lg lg:mx-32 mx-auto">
-                <Likes postKey={postKey} />
+                <Likes postKey={postKey} isValidPage={true} />
             </div>
             <div className="mb-8 md:mb-16 sm:mx-0 lg:mx-32">
                 <CoverImage title={title} src={coverImage} />

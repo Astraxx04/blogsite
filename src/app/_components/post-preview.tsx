@@ -38,7 +38,7 @@ export function PostPreview({
                 <DateFormatter dateString={date} />
             </div>
             <div className="text-lg mb-4">
-                <Likes postKey={postKey} />
+                <Likes postKey={postKey} isValidPage={false} />
             </div>
             <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
             <Avatar name={author.name} picture={author.picture} />

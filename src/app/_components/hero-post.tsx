@@ -43,7 +43,7 @@ export function HeroPost({
                         <DateFormatter dateString={date} />
                     </div>
                     <div className="mb-4 md:mb-0 text-lg">
-                        <Likes postKey={postKey} />
+                        <Likes postKey={postKey} isValidPage={false} />
                     </div>
                 </div>
                 <div>
