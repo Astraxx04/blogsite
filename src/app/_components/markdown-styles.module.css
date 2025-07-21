@@ -92,9 +92,8 @@
 .markdown ol code,
 .markdown ul code {
     background-color: #f5f7fa;
-    color: #2d2d2d;
-    padding: 16px 12px;
+    color: #1f1e1e;
+    padding: 4px;
     border-radius: 6px;
     font-family: "Fira Code", "Courier New", monospace;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }

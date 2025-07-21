@@ -23,90 +23,90 @@ This blog is my personal space to track my progress, consolidate what I’ve lea
 
 1. [Merge Strings Alternately](https://leetcode.com/problems/merge-strings-alternately/description/)
 
-    ```python
-    def mergeAlternately(self, word1: str, word2: str) -> str:
-        i = 0
-        word = ""
-        max_len = max(len(word1), len(word2))
-        while(i < max_len):
-            if i < len(word1):
-                word = word + word1[i]
-            if i < len(word2):
-                word = word + word2[i]
-            i += 1
+```python
+def mergeAlternately(self, word1: str, word2: str) -> str:
+    i = 0
+    word = ""
+    max_len = max(len(word1), len(word2))
+    while(i < max_len):
+        if i < len(word1):
+            word = word + word1[i]
+        if i < len(word2):
+            word = word + word2[i]
+        i += 1
 
-        return word
-    ```
+    return word
+```
 
 2. [Greatest Common Divisor of Strings](https://leetcode.com/problems/greatest-common-divisor-of-strings/description/)
 
-    ```python
-    def gcdOfStrings(self, str1: str, str2: str) -> str:
-        if str1 + str2 != str2 + str1:
-            return ""
+```python
+def gcdOfStrings(self, str1: str, str2: str) -> str:
+    if str1 + str2 != str2 + str1:
+        return ""
 
-        def gcd(a, b):
-            while b != 0:
-                a, b = b, a % b
-            return a
+    def gcd(a, b):
+        while b != 0:
+            a, b = b, a % b
+        return a
 
-        if a == 0:
-            return ""
+    if a == 0:
+        return ""
 
-        return str1[:gcd(len(str1), len(str2))]
-    ```
+    return str1[:gcd(len(str1), len(str2))]
+```
 
 3. [Kids With the Greatest Number of Candies](https://leetcode.com/problems/kids-with-the-greatest-number-of-candies/description/)
 
-    ```python
-    def kidsWithCandies(self, candies: List[int], extraCandies: int) -> List[bool]:
-        max_candies = max(candies)
-        res = []
-        for i in range(len(candies)):
-            if candies[i] + extraCandies >= max_candies:
-                res.append(True)
-            else:
-                res.append(False)
-        return res
-    ```
+```python
+def kidsWithCandies(self, candies: List[int], extraCandies: int) -> List[bool]:
+    max_candies = max(candies)
+    res = []
+    for i in range(len(candies)):
+        if candies[i] + extraCandies >= max_candies:
+            res.append(True)
+        else:
+            res.append(False)
+    return res
+```
 
 4. [Can Place Flowers](https://leetcode.com/problems/can-place-flowers/description/)
 
-    ```python
-    def canPlaceFlowers(self, flowerbed: List[int], n: int) -> bool:
-        count = 0
-        for i in range(len(flowerbed)):
-            left = i == 0 or flowerbed[i-1] == 0
-            right = i == len(flowerbed) - 1 or flowerbed[i+1] == 0
+```python
+def canPlaceFlowers(self, flowerbed: List[int], n: int) -> bool:
+    count = 0
+    for i in range(len(flowerbed)):
+        left = i == 0 or flowerbed[i-1] == 0
+        right = i == len(flowerbed) - 1 or flowerbed[i+1] == 0
 
-            if left and right and flowerbed[i] == 0:
-                flowerbed[i] = 1
-                count += 1
-        
-        return count >= n
-    ```
+        if left and right and flowerbed[i] == 0:
+            flowerbed[i] = 1
+            count += 1
+    
+    return count >= n
+```
 
 5. [Reverse Vowels of a String](https://leetcode.com/problems/reverse-vowels-of-a-string/description/)
 
-    ```python
-    def reverseVowels(self, s: str) -> str:
-        s = list(s)
-        n = len(s)
+```python
+def reverseVowels(self, s: str) -> str:
+    s = list(s)
+    n = len(s)
 
-        vowels = set('AEIOUaeiou')
+    vowels = set('AEIOUaeiou')
 
-        l = 0
-        r = n - 1
+    l = 0
+    r = n - 1
 
-        while(l<r):
-            while l<r and s[l] not in vowels:
-                l += 1
-            while l<r and s[r] not in vowels:
-                r -= 1
-
-            s[l], s[r] = s[r], s[l]
+    while(l<r):
+        while l<r and s[l] not in vowels:
             l += 1
+        while l<r and s[r] not in vowels:
             r -= 1
 
-        return "".join(s)
-    ```
+        s[l], s[r] = s[r], s[l]
+        l += 1
+        r -= 1
+
+    return "".join(s)
+```
