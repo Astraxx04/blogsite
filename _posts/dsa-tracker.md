@@ -110,3 +110,126 @@ def reverseVowels(self, s: str) -> str:
 
     return "".join(s)
 ```
+
+6. [Delete Characters to Make Fancy String](https://leetcode.com/problems/delete-characters-to-make-fancy-string/description/)
+
+```python
+def makeFancyString(self, s: str) -> str:
+    ans = s[0]
+    cnt = 1
+    for i in range(1, len(s)):
+        if s[i] == ans[-1]:
+            cnt += 1
+            if cnt < 3:
+                ans += s[i]
+        else:
+            cnt = 1
+            ans += s[i]
+    return ans
+```
+
+7. [Reverse Words in a String](https://leetcode.com/problems/reverse-words-in-a-string/description/)
+
+```python
+def reverseWords(self, s: str) -> str:
+    words = s.strip().split()
+    words.reverse()
+    return " ".join(words)
+```
+
+---
+
+```python
+def reverseWords(self, s: str) -> str:
+    s = s + " "
+    ns = ""
+    ts = ""
+    for x in s:
+        if x != " ":
+            ts = ts + x
+        else:
+            ns = ts.strip() + " " + ns.strip()
+            ts = ""
+    return ns.strip()         
+```
+
+8. [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/description/)
+
+```python
+def productExceptSelf(self, nums: List[int]) -> List[int]:
+    output = [1] * len(nums)
+
+    left = 1
+    for i in range(len(nums)):
+        output[i] = output[i] * left
+        left = left * nums[i]
+    
+    right = 1
+    for i in range(len(nums)-1, -1, -1):
+        output[i] = output[i] * right
+        right = right * nums[i]
+
+    return output     
+```
+
+9. [Increasing Triplet Subsequence](https://leetcode.com/problems/increasing-triplet-subsequence/description/)
+
+```python
+def increasingTriplet(self, nums: List[int]) -> bool:
+    first = second = max(nums)
+    for num in nums:
+        if num <= first:
+            first = num
+        elif num <= second:
+            second = num
+        else:
+            return True
+    return False 
+```
+
+10. [String Compression](https://leetcode.com/problems/string-compression/description/)
+
+```python
+def compress(self, chars: List[str]) -> int:
+    ans = 0
+    i = 0
+
+    while(i < len(chars)):
+        letter = chars[i]
+        count = 0
+
+        while(i < len(chars) and chars[i] == letter):
+            count += 1
+            i += 1
+
+        chars[ans] = letter
+        ans += 1
+
+        if count > 1:
+            for c in str(count):
+                chars[ans] = c
+                ans += 1
+
+    return ans
+```
+
+11. [Maximum Erasure Value](https://leetcode.com/problems/maximum-erasure-value/description/)
+
+```python
+def maximumUniqueSubarray(self, nums: List[int]) -> int:
+    seen = set()
+    left = 0
+    current_sum = 0
+    max_sum = 0
+    
+    for right in range(len(nums)):
+        while nums[right] in seen:
+            current_sum -= nums[left]
+            seen.remove(nums[left])
+            left += 1
+        current_sum += nums[right]
+        seen.add(nums[right])
+        max_sum = max(max_sum, current_sum)
+    
+    return max_sum
+```

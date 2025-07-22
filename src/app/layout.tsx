@@ -63,7 +63,7 @@ export default function RootLayout({
             <body
                 className={cn(
                     inter.className,
-                    'dark:bg-stone-950 dark:text-slate-300'
+                    'dark:bg-[#1d1e20] dark:text-slate-300'
                 )}
             >
                 <ThemeSwitcher />
