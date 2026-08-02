@@ -6,30 +6,40 @@ type Props = {
     title: string;
     src: string;
     slug?: string;
+    priority?: boolean;
+    className?: string;
 };
 
-const CoverImage = ({ title, src, slug }: Props) => {
+const CoverImage = ({ title, src, slug, priority, className }: Props) => {
     const image = (
         <Image
             src={src}
-            alt={`Cover Image for ${title}`}
-            className={cn('shadow-sm w-full', {
-                'hover:shadow-lg transition-shadow duration-200': slug,
-            })}
+            alt={`Cover image for ${title}`}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             width={1200}
             height={630}
+            priority={priority}
+            sizes="(max-width: 768px) 100vw, 800px"
         />
     );
-    return (
-        <div className="sm:mx-0">
-            {slug ? (
-                <Link href={`/posts/${slug}`} aria-label={title}>
-                    {image}
-                </Link>
-            ) : (
-                image
+
+    const frame = (
+        <div
+            className={cn(
+                'group relative block overflow-hidden rounded-2xl border border-line bg-bg-soft shadow-card',
+                className
             )}
+        >
+            {image}
         </div>
+    );
+
+    return slug ? (
+        <Link href={`/posts/${slug}`} aria-label={title} tabIndex={-1}>
+            {frame}
+        </Link>
+    ) : (
+        frame
     );
 };
 

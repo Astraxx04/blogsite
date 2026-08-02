@@ -1,36 +1,24 @@
 import Container from '@/app/_components/container';
-import cn from 'classnames';
 
 type Props = {
     preview?: boolean;
 };
 
 const Alert = ({ preview }: Props) => {
+    if (!preview) return null;
+
     return (
-        <div
-            className={cn('border-b dark:bg-slate-800', {
-                'bg-neutral-800 border-neutral-800 text-white': preview,
-                'bg-neutral-50 border-neutral-200': !preview,
-            })}
-        >
+        <div className="border-b border-line bg-bg-soft">
             <Container>
-                <div className="text-center text-sm">
-                    {preview ? (
-                        <>
-                            <div className="py-2">
-                                This page is a preview.{' '}
-                                <a
-                                    href="/api/exit-preview"
-                                    className="underline hover:text-teal-300 duration-200 transition-colors"
-                                >
-                                    Click here
-                                </a>{' '}
-                                to exit preview mode.
-                            </div>
-                        </>
-                    ) : (
-                        <></>
-                    )}
+                <div className="py-2.5 text-center text-sm text-fg-muted">
+                    This page is a preview.{' '}
+                    <a
+                        href="/api/exit-preview"
+                        className="font-semibold text-link underline underline-offset-2 transition-colors hover:text-link-hover"
+                    >
+                        Click here
+                    </a>{' '}
+                    to exit preview mode.
                 </div>
             </Container>
         </div>

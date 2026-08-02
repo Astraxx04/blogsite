@@ -4,3 +4,5 @@ logs/
 .vscode/
 .DS_Store
 .env
+# TypeScript incremental build cache
+*.tsbuildinfo

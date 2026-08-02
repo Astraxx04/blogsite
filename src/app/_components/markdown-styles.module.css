@@ -1,99 +1,324 @@
+/************ Long-form reading styles ************
+   Everything here optimises for one thing: reading a screenful of text
+   comfortably. Serif body at 19px/1.8, a ~68ch measure (set by the wrapper),
+   sans-serif headings for scanning, and code panels that stay dark in both
+   themes so syntax colours never shift. */
+
 .markdown {
-    @apply text-lg leading-relaxed;
+    font-family: var(--font-serif), Georgia, 'Times New Roman', serif;
+    font-size: 1.1875rem;
+    line-height: 1.8;
+    color: var(--fg);
+    letter-spacing: 0.003em;
 }
 
-.dark .markdown {
-    @apply text-white;
+.markdown > * + * {
+    margin-top: 1.6em;
 }
 
-.markdown p,
-.markdown ul,
-.markdown ol,
-.markdown blockquote {
-    @apply my-6;
+.markdown p {
+    margin: 0;
+    hyphens: auto;
+}
+
+/* Opening paragraph reads as a lead-in. */
+.markdown > p:first-of-type {
+    font-size: 1.28rem;
+    line-height: 1.7;
+    color: var(--fg);
+}
+
+/************ Headings ************/
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--fg);
+    scroll-margin-top: 100px;
 }
 
 .markdown h1 {
-    @apply text-4xl font-bold mt-16 mb-8 leading-snug;
+    font-size: 2.1rem;
+    margin-top: 3.2em;
 }
 
 .markdown h2 {
-    @apply text-3xl font-semibold mt-12 mb-4 leading-snug;
+    font-size: 1.72rem;
+    margin-top: 2.6em;
+    padding-bottom: 0.4em;
+    border-bottom: 1px solid var(--line);
 }
 
 .markdown h3 {
-    @apply text-2xl font-medium mt-8 mb-4 leading-snug;
+    font-size: 1.34rem;
+    margin-top: 2.2em;
 }
 
 .markdown h4 {
-    @apply text-xl font-medium mt-6 mb-3;
+    font-size: 1.12rem;
+    font-weight: 600;
+    margin-top: 1.9em;
+    color: var(--fg-muted);
+}
+
+.markdown h2 + *,
+.markdown h3 + *,
+.markdown h4 + * {
+    margin-top: 0.85em;
+}
+
+/* Anchor link appended to each heading by rehype-autolink-headings. */
+.markdown :is(h1, h2, h3, h4) :global(.heading-anchor) {
+    margin-left: 0.4em;
+    color: var(--fg-subtle);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+}
+
+.markdown :is(h1, h2, h3, h4):hover :global(.heading-anchor),
+.markdown :global(.heading-anchor):focus-visible {
+    opacity: 1;
+}
+
+/************ Links ************/
+.markdown a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(170, 54, 124, 0.45);
+    transition:
+        color 0.2s ease-out,
+        text-decoration-color 0.2s ease-out;
+}
+
+.markdown a:hover {
+    color: var(--link-hover);
+    text-decoration-color: currentColor;
+}
+
+/************ Lists ************/
+.markdown ul,
+.markdown ol {
+    padding-left: 1.45em;
 }
 
 .markdown ul {
-    @apply list-disc pl-6;
+    list-style: none;
+}
+
+.markdown ul > li {
+    position: relative;
+}
+
+/* Custom marker keeps the brand accent without shrinking the text. */
+.markdown ul > li::before {
+    content: '';
+    position: absolute;
+    left: -1.05em;
+    top: 0.72em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #aa367c, #4a2fbd);
 }
 
 .markdown ol {
-    @apply list-decimal pl-6;
+    list-style: decimal;
 }
 
-.markdown li {
-    @apply my-2;
+.markdown ol > li::marker {
+    color: var(--fg-subtle);
+    font-family: var(--font-sans), sans-serif;
+    font-size: 0.95em;
 }
 
-.markdown a {
-    @apply text-blue-500 hover:underline;
+.markdown li + li {
+    margin-top: 0.55em;
 }
 
+.markdown li > ul,
+.markdown li > ol {
+    margin-top: 0.55em;
+}
+
+/************ Quotes ************/
 .markdown blockquote {
-    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600;
+    position: relative;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0.2em 0 0.2em 1.4em;
+    border-left: 3px solid transparent;
+    border-image: linear-gradient(180deg, #aa367c, #4a2fbd) 1;
+    color: var(--fg-muted);
+    font-style: normal;
 }
 
-/* .markdown table {
-  @apply w-full border-collapse my-6;
+.markdown blockquote p {
+    font-size: 1.12rem;
+}
+
+/************ Code ************/
+.markdown code {
+    font-family: var(--font-mono), ui-monospace, 'Fira Code', monospace;
+    font-size: 0.88em;
+    font-variant-ligatures: none;
+}
+
+/* Inline code — tinted chip, never the same weight as a link. */
+.markdown :not(pre) > code {
+    padding: 0.15em 0.4em;
+    border-radius: 5px;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    white-space: nowrap;
+}
+
+.markdown pre {
+    position: relative;
+    margin-top: 1.7em;
+    margin-bottom: 1.7em;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--pre-line);
+    border-radius: 12px;
+    background: var(--pre-bg) !important;
+    overflow-x: auto;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    tab-size: 4;
+    box-shadow: var(--shadow-card);
+}
+
+.markdown pre code {
+    display: block;
+    padding: 0;
+    background: transparent !important;
+    color: #abb2bf;
+    font-size: inherit;
+    white-space: pre;
+}
+
+.markdown pre::-webkit-scrollbar {
+    height: 8px;
+}
+
+.markdown pre::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/************ Media ************/
+/* Full column width so in-post media lines up with prose, code and the cover. */
+.markdown img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 2em 0;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+}
+
+.markdown figure {
+    margin: 2em 0;
+}
+
+.markdown figcaption {
+    margin-top: 0.7em;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--fg-subtle);
+}
+
+/************ Tables ************/
+.markdown table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-family: var(--font-sans), sans-serif;
+    font-size: 0.98rem;
 }
 
 .markdown th,
 .markdown td {
-  @apply border border-gray-300 px-4 py-2;
+    padding: 0.6em 0.9em;
+    border: 1px solid var(--line);
+    text-align: left;
 }
 
 .markdown th {
-  @apply bg-gray-200 font-semibold;
+    background: var(--bg-soft);
+    font-weight: 600;
 }
 
-.markdown tbody tr:nth-child(odd) {
-  @apply bg-gray-100;
-} */
-
+/************ Rules ************/
 .markdown hr {
-    @apply border-t border-gray-300 my-8;
+    height: 1px;
+    margin: 2.8em 0;
+    border: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--line-strong),
+        transparent
+    );
 }
 
-.markdown img {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    padding-bottom: 1rem;
-    border-radius: 0px;
+/* A leading `---` right under the front matter is only decorative. */
+.markdown > hr:first-child {
+    display: none;
 }
 
-@media (max-width: 768px) {
-    .markdown img {
-        max-width: 100%;
-        padding-bottom: 1rem;
+.markdown strong {
+    font-weight: 700;
+    color: var(--fg);
+}
+
+.markdown kbd {
+    padding: 0.15em 0.45em;
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: var(--bg-soft);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.82em;
+}
+
+/************ Small screens ************/
+@media (max-width: 640px) {
+    .markdown {
+        font-size: 1.0625rem;
+        line-height: 1.75;
     }
-}
 
-.markdown p code,
-.markdown ol code,
-.markdown ul code {
-    background-color: #f5f7fa;
-    color: #1f1e1e;
-    padding: 4px;
-    border-radius: 6px;
-    font-family: "Fira Code", "Courier New", monospace;
+    .markdown > p:first-of-type {
+        font-size: 1.15rem;
+    }
+
+    .markdown h1 {
+        font-size: 1.75rem;
+    }
+
+    .markdown h2 {
+        font-size: 1.45rem;
+    }
+
+    .markdown h3 {
+        font-size: 1.2rem;
+    }
+
+    .markdown pre {
+        padding: 1rem;
+        font-size: 0.88rem;
+        border-radius: 10px;
+    }
 }

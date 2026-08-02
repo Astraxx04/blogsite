@@ -2,8 +2,8 @@ import Avatar from '@/app/_components/avatar';
 import CoverImage from '@/app/_components/cover-image';
 import { type Author } from '@/interfaces/author';
 import Link from 'next/link';
-import DateFormatter from './date-formatter';
 import Likes from './likes';
+import PostMeta from './post-meta';
 
 type Props = {
     title: string;
@@ -13,6 +13,7 @@ type Props = {
     excerpt: string;
     author: Author;
     slug: string;
+    minutes?: number;
 };
 
 export function HeroPost({
@@ -23,34 +24,54 @@ export function HeroPost({
     excerpt,
     author,
     slug,
+    minutes,
 }: Props) {
     return (
-        <section>
-            <div className="mb-8 md:mb-16">
-                <CoverImage title={title} src={coverImage} slug={slug} />
+        <section className="mb-20 md:mb-28">
+            <div className="mb-6 flex items-center gap-3">
+                <span className="text-xs font-semibold uppercase tracking-[1.5px] text-accent">
+                    Latest post
+                </span>
+                <span className="h-px flex-1 bg-line" aria-hidden />
             </div>
-            <div className="md:grid md:grid-cols-2 md:gap-x-16 lg:gap-x-8 mb-20 md:mb-28">
+
+            <article className="grid gap-8 rounded-3xl border border-line bg-card p-5 shadow-card transition-colors hover:bg-card-hover md:p-7 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-12">
+                <CoverImage
+                    title={title}
+                    src={coverImage}
+                    slug={slug}
+                    priority
+                    className="aspect-[16/9]"
+                />
+
                 <div>
-                    <h3 className="mb-4 text-4xl lg:text-5xl leading-tight">
+                    <h2 className="text-2xl font-bold leading-tight tracking-tight sm:text-3xl lg:text-[2.1rem]">
                         <Link
                             href={`/posts/${slug}`}
-                            className="hover:underline"
+                            className="decoration-accent decoration-2 underline-offset-4 hover:underline"
                         >
                             {title}
                         </Link>
-                    </h3>
-                    <div className="mb-4 md:mb-0 text-lg">
-                        <DateFormatter dateString={date} />
-                    </div>
-                    <div className="mb-4 md:mb-0 text-lg">
-                        <Likes postKey={postKey} isValidPage={false} />
+                    </h2>
+
+                    <PostMeta date={date} minutes={minutes} className="mt-3" />
+
+                    <p className="mt-4 text-body-sm text-fg-muted">{excerpt}</p>
+
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
+                        <Avatar
+                            name={author.name}
+                            picture={author.picture}
+                            size="sm"
+                        />
+                        <Likes
+                            postKey={postKey}
+                            isValidPage={false}
+                            variant="compact"
+                        />
                     </div>
                 </div>
-                <div>
-                    <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-                    <Avatar name={author.name} picture={author.picture} />
-                </div>
-            </div>
+            </article>
         </section>
     );
 }

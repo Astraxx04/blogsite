@@ -3,3 +3,330 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/************ Design tokens ************
+   Palette is lifted from the portfolio site: #121212 ground, the
+   #aa367c -> #4a2fbd pink/purple gradient, and its lighter #e05fae / #7d63ff
+   text pair. Light mode keeps the same hues but darkens them enough to stay
+   readable on paper-white. */
+@layer base {
+    :root {
+        color-scheme: light;
+
+        --bg: #fbfafc;
+        --bg-soft: #f3f0f7;
+        --bg-translucent: rgba(251, 250, 252, 0.82);
+        --card: #ffffff;
+        --card-hover: #ffffff;
+        --line: rgba(24, 22, 34, 0.12);
+        --line-strong: rgba(24, 22, 34, 0.22);
+
+        --fg: #17161d;
+        --fg-muted: #4c4859;
+        --fg-subtle: #6d6880;
+
+        --link: #96286c;
+        --link-hover: #4a2fbd;
+        /* Section labels and underlines — darker than the brand rose so they
+           clear 4.5:1 on paper-white. */
+        --accent: #a3306f;
+
+        --code-bg: #f2eff6;
+        --code-fg: #7b2560;
+        --pre-bg: #1a1a20;
+        --pre-line: rgba(255, 255, 255, 0.1);
+
+        --shadow-card:
+            0 1px 2px rgba(24, 22, 34, 0.05), 0 10px 30px rgba(24, 22, 34, 0.07);
+        --glow-1: rgba(170, 54, 124, 0.12);
+        --glow-2: rgba(74, 47, 189, 0.12);
+    }
+
+    .dark {
+        color-scheme: dark;
+
+        --bg: #121212;
+        --bg-soft: #17171b;
+        --bg-translucent: rgba(18, 18, 18, 0.78);
+        --card: rgba(255, 255, 255, 0.04);
+        --card-hover: rgba(255, 255, 255, 0.07);
+        --line: rgba(255, 255, 255, 0.1);
+        --line-strong: rgba(255, 255, 255, 0.24);
+
+        --fg: #f1f0f3;
+        --fg-muted: #bdb9c4;
+        --fg-subtle: #948fa0;
+
+        --link: #e79ac8;
+        --link-hover: #a99bff;
+        --accent: #d17ab3;
+
+        --code-bg: rgba(224, 95, 174, 0.12);
+        --code-fg: #f0a6d1;
+        --pre-bg: #1a1a20;
+        --pre-line: rgba(255, 255, 255, 0.08);
+
+        --shadow-card:
+            0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 34px rgba(0, 0, 0, 0.35);
+        --glow-1: rgba(170, 54, 124, 0.3);
+        --glow-2: rgba(74, 47, 189, 0.28);
+    }
+
+    html {
+        scroll-behavior: smooth;
+        /* Keeps in-page heading anchors clear of the sticky header. */
+        scroll-padding-top: 96px;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--fg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    ::selection {
+        background: rgba(170, 54, 124, 0.35);
+        color: var(--fg);
+    }
+
+    :focus-visible {
+        outline: 2px solid #d17ab3;
+        outline-offset: 3px;
+        border-radius: 4px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        text-wrap: balance;
+    }
+
+    p {
+        text-wrap: pretty;
+    }
+}
+
+/************ Reusable pieces ************/
+@layer components {
+    /* Ambient pink/purple wash behind the top of every page — the portfolio's
+       banner backdrop, dialled down so text stays high-contrast. */
+    .page-glow {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: 620px;
+        z-index: -1;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                ellipse 60% 55% at 12% 0%,
+                var(--glow-1) 0%,
+                transparent 60%
+            ),
+            radial-gradient(
+                ellipse 55% 50% at 88% 8%,
+                var(--glow-2) 0%,
+                transparent 60%
+            );
+    }
+
+    /* Keyboard-only jump past the header into the article. */
+    .skip-link {
+        position: absolute;
+        left: 16px;
+        top: -60px;
+        z-index: 100;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--card);
+        border: 1px solid var(--line-strong);
+        color: var(--fg);
+        font-size: 14px;
+        font-weight: 600;
+        transition: top 0.2s ease-out;
+    }
+
+    .skip-link:focus {
+        top: 16px;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--card);
+        backdrop-filter: blur(6px);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--fg-muted);
+    }
+
+    .gradient-text {
+        background: linear-gradient(90deg, #e05fae 0%, #7d63ff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    /* Pill button carried over from the portfolio's .tagline, including the
+       single specular sweep on hover. */
+    .btn-primary {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        overflow: hidden;
+        isolation: isolate;
+        padding: 11px 26px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 999px;
+        background: linear-gradient(90.21deg, #aa367c -5.91%, #4a2fbd 111.58%);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition:
+            transform 0.25s ease-out,
+            box-shadow 0.3s ease-out;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -60%;
+        width: 45%;
+        background: linear-gradient(
+            100deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.38) 50%,
+            transparent 100%
+        );
+        transform: skewX(-20deg);
+        pointer-events: none;
+    }
+
+    .btn-primary:hover::before {
+        animation: shine 0.7s ease-out;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(170, 54, 124, 0.35);
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 22px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: var(--card);
+        color: var(--fg);
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition:
+            background 0.25s ease-out,
+            border-color 0.25s ease-out,
+            transform 0.25s ease-out;
+    }
+
+    .btn-ghost:hover {
+        border-color: rgba(170, 54, 124, 0.6);
+        background: rgba(170, 54, 124, 0.1);
+        transform: translateY(-2px);
+    }
+
+    @keyframes shine {
+        from {
+            left: -60%;
+        }
+        to {
+            left: 120%;
+        }
+    }
+
+    /* Hairline rule that fades out at both ends. */
+    .rule {
+        height: 1px;
+        border: 0;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            var(--line-strong),
+            transparent
+        );
+    }
+
+    /* Injected into every <pre> by the CodeCopy client component. Code panels
+       are dark in both themes, so this button is too. */
+    .code-copy-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #cfcbd6;
+        font-family: var(--font-sans), system-ui, sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        opacity: 0;
+        cursor: pointer;
+        transition:
+            opacity 0.2s ease-out,
+            background 0.2s ease-out,
+            color 0.2s ease-out;
+    }
+
+    pre:hover .code-copy-btn,
+    .code-copy-btn:focus-visible {
+        opacity: 1;
+    }
+
+    .code-copy-btn:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #fff;
+    }
+
+    .code-copy-btn[data-copied] {
+        opacity: 1;
+        border-color: rgba(209, 122, 179, 0.6);
+        color: #f0a6d1;
+    }
+
+    /* Touch devices never hover — keep the button visible there. */
+    @media (hover: none) {
+        .code-copy-btn {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}

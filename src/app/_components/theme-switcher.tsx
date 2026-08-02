@@ -1,7 +1,6 @@
 'use client';
 
-import styles from './switch.module.css';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, type ReactElement } from 'react';
 
 declare global {
     var updateDOM: () => void;
@@ -11,8 +10,6 @@ type ColorSchemePreference = 'system' | 'dark' | 'light';
 
 const STORAGE_KEY = 'gagan-insights-repo';
 const modes: ColorSchemePreference[] = ['system', 'dark', 'light'];
-
-/** to reuse updateDOM function defined inside injected script */
 
 /** function to be injected in script tag for avoiding FOUC (Flash of Unstyled Content) */
 export const NoFOUCScript = (storageKey: string) => {
@@ -53,20 +50,64 @@ export const NoFOUCScript = (storageKey: string) => {
 
 let updateDOM: () => void;
 
+const icons: Record<ColorSchemePreference, ReactElement> = {
+    system: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <rect
+                x="2.5"
+                y="4"
+                width="19"
+                height="13"
+                rx="2"
+                strokeWidth="1.7"
+            />
+            <path d="M8 20.5h8" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+    ),
+    dark: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <path
+                d="M20 14.2A8.2 8.2 0 1 1 9.8 4a6.6 6.6 0 0 0 10.2 10.2Z"
+                strokeWidth="1.7"
+                strokeLinejoin="round"
+            />
+        </svg>
+    ),
+    light: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+            <circle cx="12" cy="12" r="4.2" strokeWidth="1.7" />
+            <path
+                d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+            />
+        </svg>
+    ),
+};
+
+const labels: Record<ColorSchemePreference, string> = {
+    system: 'System theme',
+    dark: 'Dark theme',
+    light: 'Light theme',
+};
+
 /**
- * Switch button to quickly toggle user preference.
+ * Icon button cycling system -> dark -> light. Sits in the site header instead
+ * of floating over the page corner.
  */
-const Switch = () => {
-    const [mode, setMode] = useState<ColorSchemePreference>(
-        () =>
-            ((typeof localStorage !== 'undefined' &&
-                localStorage.getItem(STORAGE_KEY)) ??
-                'system') as ColorSchemePreference
-    );
+export const ThemeToggle = () => {
+    /* Stays null until mounted: the stored preference is only known on the
+       client, and reading it during the first render would make the icon
+       disagree with the server HTML (hydration mismatch). */
+    const [mode, setMode] = useState<ColorSchemePreference | null>(null);
 
     useEffect(() => {
         // store global functions to local variables to avoid any interference
         updateDOM = window.updateDOM;
+        setMode(
+            (localStorage.getItem(STORAGE_KEY) ??
+                'system') as ColorSchemePreference
+        );
         /** Sync the tabs */
         addEventListener('storage', (e: StorageEvent): void => {
             e.key === STORAGE_KEY &&
@@ -75,40 +116,36 @@ const Switch = () => {
     }, []);
 
     useEffect(() => {
+        if (!mode) return;
         localStorage.setItem(STORAGE_KEY, mode);
         updateDOM();
     }, [mode]);
 
+    const current = mode ?? 'system';
+
     /** toggle mode */
     const handleModeSwitch = () => {
-        const index = modes.indexOf(mode);
+        const index = modes.indexOf(current);
         setMode(modes[(index + 1) % modes.length]);
     };
+
     return (
         <button
-            suppressHydrationWarning
-            className={styles.switch}
             onClick={handleModeSwitch}
-        />
+            title={`${labels[current]} — click to change`}
+            aria-label={`${labels[current]}. Click to switch theme.`}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-card text-fg-muted transition-colors hover:border-brand-rose hover:text-fg"
+        >
+            <span className="block h-[18px] w-[18px]">{icons[current]}</span>
+        </button>
     );
 };
 
-const Script = memo(() => (
+export const ThemeScript = memo(() => (
     <script
         dangerouslySetInnerHTML={{
             __html: `(${NoFOUCScript.toString()})('${STORAGE_KEY}')`,
         }}
     />
 ));
-
-/**
- * This component wich applies classes and transitions.
- */
-export const ThemeSwitcher = () => {
-    return (
-        <>
-            <Script />
-            <Switch />
-        </>
-    );
-};
+ThemeScript.displayName = 'ThemeScript';

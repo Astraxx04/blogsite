@@ -2,8 +2,8 @@ import { type Author } from '@/interfaces/author';
 import Link from 'next/link';
 import Avatar from './avatar';
 import CoverImage from './cover-image';
-import DateFormatter from './date-formatter';
 import Likes from './likes';
+import PostMeta from './post-meta';
 
 type Props = {
     title: string;
@@ -13,6 +13,7 @@ type Props = {
     excerpt: string;
     author: Author;
     slug: string;
+    minutes?: number;
 };
 
 export function PostPreview({
@@ -23,25 +24,47 @@ export function PostPreview({
     excerpt,
     author,
     slug,
+    minutes,
 }: Props) {
     return (
-        <div>
-            <div className="mb-5">
-                <CoverImage slug={slug} title={title} src={coverImage} />
+        <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card p-4 shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-line-strong hover:bg-card-hover hover:shadow-lift">
+            <CoverImage
+                slug={slug}
+                title={title}
+                src={coverImage}
+                className="aspect-[16/9]"
+            />
+
+            <div className="flex flex-1 flex-col px-1 pt-5">
+                <h3 className="text-xl font-bold leading-snug tracking-tight sm:text-[1.375rem]">
+                    <Link
+                        href={`/posts/${slug}`}
+                        className="decoration-accent decoration-2 underline-offset-4 hover:underline"
+                    >
+                        {title}
+                    </Link>
+                </h3>
+
+                <PostMeta date={date} minutes={minutes} className="mt-2.5" />
+
+                {/* Clamped so a long excerpt cannot stretch one card in the grid. */}
+                <p className="mt-3 line-clamp-4 text-body-sm text-fg-muted">
+                    {excerpt}
+                </p>
+
+                <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
+                    <Avatar
+                        name={author.name}
+                        picture={author.picture}
+                        size="sm"
+                    />
+                    <Likes
+                        postKey={postKey}
+                        isValidPage={false}
+                        variant="compact"
+                    />
+                </div>
             </div>
-            <h3 className="text-3xl mb-3 leading-snug">
-                <Link href={`/posts/${slug}`} className="hover:underline">
-                    {title}
-                </Link>
-            </h3>
-            <div className="text-lg mb-4">
-                <DateFormatter dateString={date} />
-            </div>
-            <div className="text-lg mb-4">
-                <Likes postKey={postKey} isValidPage={false} />
-            </div>
-            <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
-            <Avatar name={author.name} picture={author.picture} />
-        </div>
+        </article>
     );
 }

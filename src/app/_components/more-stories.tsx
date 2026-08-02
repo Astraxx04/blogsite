@@ -1,4 +1,5 @@
 import { Post } from '@/interfaces/post';
+import { readingTime } from '@/lib/reading-time';
 import { PostPreview } from './post-preview';
 
 type Props = {
@@ -7,11 +8,18 @@ type Props = {
 
 export function MoreStories({ posts }: Props) {
     return (
-        <section>
-            <h2 className="mb-8 text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
-                More Insights..
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-16 lg:gap-x-32 gap-y-20 md:gap-y-32 mb-32">
+        <section className="pb-24">
+            <div className="mb-8 flex items-center gap-3">
+                <h2 className="text-xs font-semibold uppercase tracking-[1.5px] text-accent">
+                    All posts
+                </h2>
+                <span className="h-px flex-1 bg-line" aria-hidden />
+                <span className="text-xs text-fg-subtle">
+                    {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+                </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
                 {posts.map((post) => (
                     <PostPreview
                         key={post.slug}
@@ -22,6 +30,7 @@ export function MoreStories({ posts }: Props) {
                         author={post.author}
                         slug={post.slug}
                         excerpt={post.excerpt}
+                        minutes={readingTime(post.content)}
                     />
                 ))}
             </div>

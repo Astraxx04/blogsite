@@ -1,18 +1,60 @@
 import Footer from '@/app/_components/footer';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google';
 import cn from 'classnames';
-import { ThemeSwitcher } from './_components/theme-switcher';
+import { ThemeScript } from './_components/theme-switcher';
+import SiteHeader from './_components/site-header';
+import { AUTHOR, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+/* Sans for UI and headings, serif for the reading column, mono for code. */
+const sans = Inter({
+    subsets: ['latin'],
+    variable: '--font-sans',
+    display: 'swap',
+});
+
+const serif = Source_Serif_4({
+    subsets: ['latin'],
+    variable: '--font-serif',
+    display: 'swap',
+});
+
+const mono = JetBrains_Mono({
+    subsets: ['latin'],
+    variable: '--font-mono',
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
-    title: `Insights Repo`,
-    description: `A developer's take on building, breaking, and learning through code.`,
+    /* Every relative URL below (and in each post) resolves against this. */
+    metadataBase: new URL(SITE_URL),
+    title: {
+        default: SITE_NAME,
+        template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    authors: [{ name: AUTHOR.name, url: AUTHOR.url }],
+    alternates: {
+        canonical: '/',
+        types: {
+            'application/rss+xml': `${SITE_URL}/feed.xml`,
+        },
+    },
     openGraph: {
-        images: ['../../public/assets/constants/spider-kid.jpg'],
+        type: 'website',
+        siteName: SITE_NAME,
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+        url: SITE_URL,
+        images: ['/assets/constants/spider-kid.jpg'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+        images: ['/assets/constants/spider-kid.jpg'],
     },
 };
 
@@ -45,28 +87,31 @@ export default function RootLayout({
                 <link
                     rel="mask-icon"
                     href="/favicon/safari-pinned-tab.svg"
-                    color="#000000"
+                    color="#aa367c"
                 />
                 <link rel="shortcut icon" href="/favicon/favicon.ico" />
-                <meta name="msapplication-TileColor" content="#000000" />
+                <meta name="msapplication-TileColor" content="#121212" />
                 <meta
                     name="msapplication-config"
                     content="/favicon/browserconfig.xml"
                 />
-                <meta name="theme-color" content="#000" />
-                <link
-                    rel="alternate"
-                    type="application/rss+xml"
-                    href="/feed.xml"
-                />
+                <meta name="theme-color" content="#121212" />
+                {/* The RSS <link rel="alternate"> comes from metadata.alternates. */}
+                <ThemeScript />
             </head>
             <body
                 className={cn(
-                    inter.className,
-                    'dark:bg-[#1d1e20] dark:text-slate-300'
+                    sans.variable,
+                    serif.variable,
+                    mono.variable,
+                    'font-sans bg-bg text-fg'
                 )}
             >
-                <ThemeSwitcher />
+                <div className="page-glow" aria-hidden />
+                <a href="#content" className="skip-link">
+                    Skip to content
+                </a>
+                <SiteHeader />
                 <div className="min-h-screen">{children}</div>
                 <Footer />
             </body>

@@ -20,12 +20,18 @@ import {
 type Props = {
     postKey: string;
     isValidPage: boolean;
+    /** 'compact' shows the read count only — used on post cards. */
+    variant?: 'compact' | 'full';
 };
 
-const env = process.env.NEXT_PUBLIC_ENV || "dev";
-const collectionName = env === "dev" ? "posts-dev" : "posts-prod";
+const env = process.env.NEXT_PUBLIC_ENV || 'dev';
+const collectionName = env === 'dev' ? 'posts-dev' : 'posts-prod';
 
-export default function PostAnalytics({ postKey, isValidPage }: Props) {
+export default function PostAnalytics({
+    postKey,
+    isValidPage,
+    variant = 'full',
+}: Props) {
     const [readCount, setReadCount] = useState<number>(0);
     const [likesCount, setLikesCount] = useState<number>(0);
     const [unlikesCount, setUnlikesCount] = useState<number>(0);
@@ -148,40 +154,55 @@ export default function PostAnalytics({ postKey, isValidPage }: Props) {
         }
     };
 
+    /* Cards only need the view count — voting belongs on the post itself. */
+    if (variant === 'compact') {
+        return (
+            <span className="inline-flex items-center gap-1.5 text-sm text-fg-subtle">
+                <FontAwesomeIcon icon={faEye} className="h-3.5 w-3.5" />
+                {readCount}
+            </span>
+        );
+    }
+
+    const chip =
+        'inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors';
+
     return (
-        <div className="analytics-section flex items-center space-x-4">
-            <div className="flex items-center">
-                <FontAwesomeIcon icon={faEye} />
-                <p className="pl-2 text-lg font-medium">{readCount}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-                <div
-                    className={`cursor-pointer ${
-                        userAction === 'like'
-                            ? 'text-green-500'
-                            : 'text-gray-600'
-                    }`}
-                    onClick={handleLike}
-                >
-                    <FontAwesomeIcon icon={faThumbsUp} />
-                    <span className="pl-2 text-lg font-medium">
-                        {likesCount}
-                    </span>
-                </div>
-                <div
-                    className={`cursor-pointer ${
-                        userAction === 'unlike'
-                            ? 'text-red-500'
-                            : 'text-gray-600'
-                    }`}
-                    onClick={handleUnlike}
-                >
-                    <FontAwesomeIcon icon={faThumbsDown} />
-                    <span className="pl-2 text-lg font-medium">
-                        {unlikesCount}
-                    </span>
-                </div>
-            </div>
+        <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-sm text-fg-subtle">
+                <FontAwesomeIcon icon={faEye} className="h-4 w-4" />
+                {readCount} {readCount === 1 ? 'read' : 'reads'}
+            </span>
+
+            <span className="h-4 w-px bg-line" aria-hidden />
+
+            <button
+                onClick={handleLike}
+                aria-pressed={userAction === 'like'}
+                aria-label={`Helpful. ${likesCount} so far.`}
+                className={`${chip} ${
+                    userAction === 'like'
+                        ? 'border-brand-pink bg-brand-pink/10 text-accent'
+                        : 'border-line bg-card text-fg-muted hover:border-brand-rose hover:text-fg'
+                }`}
+            >
+                <FontAwesomeIcon icon={faThumbsUp} className="h-4 w-4" />
+                {likesCount}
+            </button>
+
+            <button
+                onClick={handleUnlike}
+                aria-pressed={userAction === 'unlike'}
+                aria-label={`Not helpful. ${unlikesCount} so far.`}
+                className={`${chip} ${
+                    userAction === 'unlike'
+                        ? 'border-brand-purple bg-brand-purple/10 text-brand-purple-light'
+                        : 'border-line bg-card text-fg-muted hover:border-brand-purple-light hover:text-fg'
+                }`}
+            >
+                <FontAwesomeIcon icon={faThumbsDown} className="h-4 w-4" />
+                {unlikesCount}
+            </button>
         </div>
     );
 }
