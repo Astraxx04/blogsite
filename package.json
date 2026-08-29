@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:check": "NEXT_DIST_DIR=.next-build next build",
     "start": "next start",
     "format": "prettier --write \"**/*.{js,jsx,tsx,css}\""
   },
