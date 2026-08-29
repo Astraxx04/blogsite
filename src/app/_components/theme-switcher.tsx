@@ -11,6 +11,14 @@ type ColorSchemePreference = 'system' | 'dark' | 'light';
 const STORAGE_KEY = 'gagan-insights-repo';
 const modes: ColorSchemePreference[] = ['system', 'dark', 'light'];
 
+/* Switching to light mode is gently discouraged. The button refuses this many
+   times — with a quip each time — before it gives in. */
+const LIGHT_MODE_NAGS = [
+    'Are you serious? It is so cosy in here.',
+    'Do you have your sunglasses on? Last warning.',
+    'Fine, but my retinas are billing you for this.',
+];
+
 /** function to be injected in script tag for avoiding FOUC (Flash of Unstyled Content) */
 export const NoFOUCScript = (storageKey: string) => {
     /* can not use outside constants or function as this script will be injected in a different context */
@@ -35,7 +43,9 @@ export const NoFOUCScript = (storageKey: string) => {
     /** function to add remove dark class */
     window.updateDOM = () => {
         const restoreTransitions = modifyTransition();
-        const mode = localStorage.getItem(storageKey) ?? SYSTEM;
+        /* Dark is the house style: an unset preference resolves to it rather
+           than to whatever the operating system asks for. */
+        const mode = localStorage.getItem(storageKey) ?? DARK;
         const systemMode = media.matches ? DARK : LIGHT;
         const resolvedMode = mode === SYSTEM ? systemMode : mode;
         const classList = document.documentElement.classList;
@@ -93,20 +103,24 @@ const labels: Record<ColorSchemePreference, string> = {
 
 /**
  * Icon button cycling system -> dark -> light. Sits in the site header instead
- * of floating over the page corner.
+ * of floating over the page corner. Dark is the default, and the step into
+ * light mode is heckled a few times before it is allowed through.
  */
 export const ThemeToggle = () => {
     /* Stays null until mounted: the stored preference is only known on the
        client, and reading it during the first render would make the icon
        disagree with the server HTML (hydration mismatch). */
     const [mode, setMode] = useState<ColorSchemePreference | null>(null);
+    /* How many times the user has been told no on their way to light mode. */
+    const [nagCount, setNagCount] = useState(0);
+    const [nag, setNag] = useState<string | null>(null);
 
     useEffect(() => {
         // store global functions to local variables to avoid any interference
         updateDOM = window.updateDOM;
         setMode(
             (localStorage.getItem(STORAGE_KEY) ??
-                'system') as ColorSchemePreference
+                'dark') as ColorSchemePreference
         );
         /** Sync the tabs */
         addEventListener('storage', (e: StorageEvent): void => {
@@ -121,23 +135,53 @@ export const ThemeToggle = () => {
         updateDOM();
     }, [mode]);
 
-    const current = mode ?? 'system';
+    /* Each quip clears itself, so the toast never outstays its welcome. */
+    useEffect(() => {
+        if (!nag) return;
+        const timer = setTimeout(() => setNag(null), 4500);
+        return () => clearTimeout(timer);
+    }, [nag]);
+
+    const current = mode ?? 'dark';
 
     /** toggle mode */
     const handleModeSwitch = () => {
         const index = modes.indexOf(current);
-        setMode(modes[(index + 1) % modes.length]);
+        const next = modes[(index + 1) % modes.length];
+
+        /* Stall on the way into light mode, then relent on the fourth try. */
+        if (next === 'light' && nagCount < LIGHT_MODE_NAGS.length) {
+            setNag(LIGHT_MODE_NAGS[nagCount]);
+            setNagCount(nagCount + 1);
+            return;
+        }
+
+        setNagCount(0);
+        setNag(null);
+        setMode(next);
     };
 
     return (
-        <button
-            onClick={handleModeSwitch}
-            title={`${labels[current]} — click to change`}
-            aria-label={`${labels[current]}. Click to switch theme.`}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-card text-fg-muted transition-colors hover:border-brand-rose hover:text-fg"
-        >
-            <span className="block h-[18px] w-[18px]">{icons[current]}</span>
-        </button>
+        <div className="relative">
+            <button
+                onClick={handleModeSwitch}
+                title={`${labels[current]} — click to change`}
+                aria-label={`${labels[current]}. Click to switch theme.`}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-card text-fg-muted transition-colors hover:border-brand-rose hover:text-fg"
+            >
+                <span className="block h-[18px] w-[18px]">
+                    {icons[current]}
+                </span>
+            </button>
+            {nag && (
+                <span
+                    role="status"
+                    className="animate-rise absolute right-0 top-12 z-50 w-max max-w-[15rem] rounded-lg border border-line bg-card px-3 py-2 text-xs text-fg shadow-card"
+                >
+                    {nag}
+                </span>
+            )}
+        </div>
     );
 };
 

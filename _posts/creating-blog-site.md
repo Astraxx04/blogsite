@@ -1,6 +1,6 @@
 ---
 title: "Creating a Simple Blog Site"
-postKey: "post-4"
+postKey: "post-3"
 excerpt: "In this blog, we’ll explore how to create a simple yet powerful blog site using Next.js, leveraging its static generation capabilities and enhancing it with additional features like analytics and syntax highlighting."
 coverImage: "/assets/blog/creating-blog-site/cover.png"
 date: "2025-06-01T10:00:00.000Z"
