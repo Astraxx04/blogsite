@@ -7,7 +7,7 @@ export function Intro() {
             </h1>
             <p className="mt-5 max-w-xl text-body-sm text-fg-muted">
                 A developer&apos;s take on building, breaking, and learning
-                through code — deep dives, walkthroughs and the odd hard-earned
+                through code -&gt; deep dives, walkthroughs and the odd hard-earned
                 lesson.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">

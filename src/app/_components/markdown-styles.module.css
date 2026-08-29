@@ -12,8 +12,18 @@
     letter-spacing: 0.003em;
 }
 
+/* Must stay clearly above the 1.8 line-height above, or the gap between two
+   paragraphs reads as tighter than the gap between two lines and the text
+   fuses into one block. 1.8em is the floor; 2.15em is comfortable. */
 .markdown > * + * {
-    margin-top: 1.6em;
+    margin-top: 1.9em;
+}
+
+/* Consecutive prose gets the most separation — that's where the ambiguity is.
+   A paragraph following a code block or list already has that block's edge
+   doing the work. */
+.markdown > p + p {
+    margin-top: 1.5em;
 }
 
 .markdown p {
@@ -140,8 +150,17 @@
     font-size: 0.95em;
 }
 
+/* Items often run to several lines, so this has to clear the 1.8 line-height
+   enough to read as a gap between items rather than a wrap inside one. */
 .markdown li + li {
-    margin-top: 0.55em;
+    margin-top: 0.95em;
+}
+
+/* Close the list off. Without this the next paragraph sits at the same
+   distance as any other paragraph break and the list never visibly ends. */
+.markdown > ul + *,
+.markdown > ol + * {
+    margin-top: 2.3em;
 }
 
 .markdown li > ul,
@@ -154,7 +173,10 @@
     position: relative;
     margin-left: 0;
     margin-right: 0;
-    padding: 0.2em 0 0.2em 1.4em;
+    /* Preflight zeroes blockquote margins, so set the vertical ones here
+       rather than leaning on the next sibling's `> * + *` margin-top. */
+    margin-bottom: 0.6em;
+    padding: 0.55em 0 0.55em 1.4em;
     border-left: 3px solid transparent;
     border-image: linear-gradient(180deg, #aa367c, #4a2fbd) 1;
     color: var(--fg-muted);
