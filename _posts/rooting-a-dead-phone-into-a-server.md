@@ -25,7 +25,7 @@ I tried again. Same thing. I tried a smaller shape. Same thing.
 
 Here's the part that took me a while to understand: Always Free compute has to live in your tenancy's *home region*. Mine was Hyderabad. Hyderabad has exactly one availability domain. So the usual advice - "try a different AD, it's just capacity pressure" - didn't apply. There was no other AD to try. Mumbai exists, but a free-tier tenancy is limited to one subscribed region, and Always Free compute has to be in the home region anyway. Creating a paid VM in Mumbai to route around a free-tier limit rather defeats the point.
 
-The consolation prize was `VM.Standard.E2.1.Micro`: one AMD core, 1 GB of RAM. I created one. It exists. It is not a machine you compile Go on.
+The consolation prize was `VM.Standard.E2.1.Micro`: 1/8 of an AMD core baseline (burstable) and 1 GB of RAM. I created one. It exists. It is not a machine you compile Go on.
 
 So I sat there with a browser tab full of capacity errors, and I opened the drawer where old electronics go to die.
 
@@ -50,7 +50,7 @@ Android:  11
 Kernel:   Linux 4.14.113
 ```
 
-Eight ARM cores and 4 GB of RAM. Compare that to the E2.1.Micro I'd just been given: one core, 1 GB. The dead phone in my drawer was, on paper, four to eight times the machine that Oracle's free tier had actually offered me.
+Eight ARM cores and 4 GB of RAM. Compare that to the E2.1.Micro I'd just been given: 1 core, 1 GB. The dead phone in my drawer was, on paper, an order of magnitude more machine than Oracle's free tier had actually offered me.
 
 It also has a battery, which is a genuinely nice property in a server. A phone is a small computer with a built-in UPS.
 
@@ -310,7 +310,7 @@ A few minutes of downloading later:
 
 ```
 root@localhost:~# cat /etc/os-release
-PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
 
 root@localhost:~# uname -m
 aarch64
@@ -319,7 +319,7 @@ aarch64
 Debian userspace, Android kernel:
 
 ```
-  Debian bookworm          userspace
+  Debian trixie            userspace
   apt, Go, your binaries
         |
         |   PRoot - rewrites syscalls with ptrace
@@ -348,7 +348,7 @@ usermod -aG sudo astraxx
 su - astraxx
 ```
 
-Then I hit something I had no framework for at all. Out of habit I typed `systemctl start postgresql`. It failed.
+Then a warning that saved me from walking into a wall: under `proot-distro`, don't expect normal systemd behaviour. No `systemctl start postgresql`, no `systemctl enable` anything. I had no framework for *why* that should be true.
 
 What I pieced together afterwards:
 
@@ -366,7 +366,9 @@ Years of typing `systemctl enable` and I'd never once wondered what was on the o
 
 ## Finding 13 GB of swap in a 4 GB phone
 
-`free -h` inside Debian showed about 3.5 GiB total, of which Android was already using a healthy chunk. Compiling Go is not a low-memory activity. This was going to be a problem, and it was - spectacularly, in Part 2.
+`free -h` inside Debian showed about 3.5 GiB total, of which Android was already using a healthy chunk. Compiling Go is not a low-memory activity.
+
+I'd met this failure before. My WSL setup used to get killed out from under me on large builds for exactly this reason - not an error, just the process gone - and it took me an embarrassingly long time the first time to work out that memory, not the compiler, was the thing that had lost. So I set swap up here, before compiling anything.
 
 **Swap** is the usual escape hatch. When RAM runs short, the kernel takes pages nothing has touched in a while, writes them out to storage, and hands the freed RAM to whatever needs it now. The program never notices, beyond going slow the moment it reaches for something that got moved out. Storage is far slower than RAM, so swap isn't extra memory in any honest sense - it's a way to survive a spike instead of being killed during one.
 
@@ -448,7 +450,7 @@ At the end of the first day, the phone which I thought was useless was:
 - bootloader unlocked, Knox permanently tripped, warranty conceptually vaporised
 - rooted with Magisk
 - running Termux with SSH on 8022
-- hosting a Debian bookworm userspace under PRoot
+- hosting a Debian trixie userspace under PRoot
 - carrying about 13 GB of swap
 - reachable from my Mac with a real keyboard
 

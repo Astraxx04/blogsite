@@ -62,19 +62,19 @@ I moved the database to [Neon](https://neon.tech/) - hosted Postgres with a usab
     +-------------+
 ```
 
-**One trap worth documenting.** Neon gives you two connection strings: a direct one and a pooled one, the pooled one being `-pooler` in the hostname. The pooled endpoint is PgBouncer in transaction mode, and PgBouncer in transaction mode breaks prepared statements. With River - which leans on them heavily - you get:
+**One trap worth documenting.** Neon gives you two connection strings: a direct one and a pooled one, the pooled one being `-pooler` in the hostname. The pooled endpoint is PgBouncer in transaction mode, and PgBouncer in transaction mode breaks prepared statements. With `golang-migrate` running the migrations, you get:
 
 ```
 pq: unnamed prepared statement does not exist
 ```
 
-intermittently, under load, in a way that looks like an application bug for a good while before you think to check which connection string you pasted. **Use the direct connection string.**
+intermittently, under load, in a way that looks like an application bug rather than a connection-string choice. I knew this one going in - which is the only reason it cost minutes here instead of an afternoon. **Use the direct connection string.**
 
 ---
 
 ## The Go toolchain
 
-Debian bookworm packages Go 1.19. The project needs 1.26.6. Not close enough.
+Debian trixie packages Go 1.24.4. The project needs 1.26.6. Not close enough.
 
 Remove the packaged version and install the official ARM64 tarball:
 
@@ -149,7 +149,7 @@ ffprobe -version
 pdftoppm -v
 ```
 
-Both had ARM64 packages in bookworm, so this was painless. It wouldn't have been if either had needed compiling - `ffmpeg` from source on this phone would have made the Go build look brisk.
+Both had ARM64 packages in trixie, so this was painless. It wouldn't have been if either had needed compiling - `ffmpeg` from source on this phone would have made the Go build look brisk.
 
 **The general point:** a container image is a dependency manifest that most of us never read as one. `go.mod`, `package.json`, `requirements.txt` - we treat those as *the* list of what a service needs. But every `apt install` and `apk add` in your Dockerfile is a dependency too, and it's the one you find out about by accident. Reading my own Dockerfile as a checklist rather than as build config was a useful shift.
 
@@ -177,7 +177,7 @@ GOMAXPROCS=2 go build -p 2 ./cmd/api
 
 It took several minutes. It did not die. `ls -lh api` showed a binary.
 
-The 10 GB swapfile from Part 1 earned its keep here - you can watch it fill during the link step. It's slow, because it's swapping to eMMC flash, but "slow" beats "killed".
+The 10 GB swapfile from Part 1 earned its keep here - capping parallelism keeps the peak lower, and swap catches what's left of it. Swapping to UFS flash is slow, but "slow" beats "killed".
 
 Same again for the worker:
 
