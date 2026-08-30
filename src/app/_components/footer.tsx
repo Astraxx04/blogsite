@@ -28,7 +28,7 @@ export function Footer() {
                             Get in <span className="gradient-text">touch</span>.
                         </h2>
                         <p className="mt-2 max-w-sm text-sm text-fg-muted">
-                            Questions, corrections or an idea for a post — all
+                            Questions, corrections or an idea for a post —&gt; all
                             welcome.
                         </p>
                     </div>

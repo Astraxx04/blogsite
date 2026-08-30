@@ -1,9 +1,7 @@
-import Avatar from '@/app/_components/avatar';
 import CoverImage from '@/app/_components/cover-image';
-import { type Author } from '@/interfaces/author';
 import Link from 'next/link';
-import Likes from './likes';
 import PostMeta from './post-meta';
+import TagList from './tag-list';
 
 type Props = {
     title: string;
@@ -11,8 +9,8 @@ type Props = {
     coverImage: string;
     date: string;
     excerpt: string;
-    author: Author;
     slug: string;
+    tags?: string[];
     minutes?: number;
 };
 
@@ -22,8 +20,8 @@ export function HeroPost({
     coverImage,
     date,
     excerpt,
-    author,
     slug,
+    tags = [],
     minutes,
 }: Props) {
     return (
@@ -54,22 +52,19 @@ export function HeroPost({
                         </Link>
                     </h2>
 
-                    <PostMeta date={date} minutes={minutes} className="mt-3" />
+                    <PostMeta
+                        date={date}
+                        minutes={minutes}
+                        postKey={postKey}
+                        className="mt-3"
+                    />
 
                     <p className="mt-4 text-body-sm text-fg-muted">{excerpt}</p>
 
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
-                        <Avatar
-                            name={author.name}
-                            picture={author.picture}
-                            size="sm"
-                        />
-                        <Likes
-                            postKey={postKey}
-                            isValidPage={false}
-                            variant="compact"
-                        />
-                    </div>
+                    <TagList
+                        tags={tags}
+                        className="mt-6 border-t border-line pt-5"
+                    />
                 </div>
             </article>
         </section>

@@ -9,6 +9,9 @@ author:
   picture: "/assets/blog/authors/gagan_img1.jpeg"
 ogImage:
   url: "/assets/blog/go-beginner-guide/cover.png"
+tags:
+  - "Go"
+  - "Tutorial"
 ---
 
 ---

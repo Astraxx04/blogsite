@@ -4,6 +4,7 @@ import { Intro } from '@/app/_components/intro';
 import { MoreStories } from '@/app/_components/more-stories';
 import { getAllPosts } from '@/lib/api';
 import { readingTime } from '@/lib/reading-time';
+import { postTags } from '@/lib/tags';
 
 export default function Index() {
     const allPosts = getAllPosts();
@@ -22,9 +23,9 @@ export default function Index() {
                         postKey={heroPost.postKey}
                         coverImage={heroPost.coverImage}
                         date={heroPost.date}
-                        author={heroPost.author}
                         slug={heroPost.slug}
                         excerpt={heroPost.excerpt}
+                        tags={postTags(heroPost)}
                         minutes={readingTime(heroPost.content)}
                     />
                 )}

@@ -9,6 +9,11 @@ author:
   picture: "/assets/blog/authors/gagan_img1.jpeg"
 ogImage:
   url: "/assets/blog/running-a-go-service-on-a-phone/cover.png"
+tags:
+  - "Self-Hosting"
+  - "Go"
+  - "Android"
+  - "DevOps"
 ---
 
 ---

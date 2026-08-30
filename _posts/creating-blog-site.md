@@ -9,6 +9,10 @@ author:
   picture: "/assets/blog/authors/gagan_img1.jpeg"
 ogImage:
   url: "/assets/blog/creating-blog-site/cover.png"
+tags:
+  - "Next.js"
+  - "Web"
+  - "Meta"
 ---
 
 ---

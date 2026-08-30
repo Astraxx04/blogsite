@@ -1,9 +1,7 @@
-import { type Author } from '@/interfaces/author';
 import Link from 'next/link';
-import Avatar from './avatar';
 import CoverImage from './cover-image';
-import Likes from './likes';
 import PostMeta from './post-meta';
+import TagList from './tag-list';
 
 type Props = {
     title: string;
@@ -11,8 +9,8 @@ type Props = {
     coverImage: string;
     date: string;
     excerpt: string;
-    author: Author;
     slug: string;
+    tags?: string[];
     minutes?: number;
 };
 
@@ -22,8 +20,8 @@ export function PostPreview({
     coverImage,
     date,
     excerpt,
-    author,
     slug,
+    tags = [],
     minutes,
 }: Props) {
     return (
@@ -45,25 +43,22 @@ export function PostPreview({
                     </Link>
                 </h3>
 
-                <PostMeta date={date} minutes={minutes} className="mt-2.5" />
+                <PostMeta
+                    date={date}
+                    minutes={minutes}
+                    postKey={postKey}
+                    className="mt-2.5"
+                />
 
                 {/* Clamped so a long excerpt cannot stretch one card in the grid. */}
                 <p className="mt-3 line-clamp-4 text-body-sm text-fg-muted">
                     {excerpt}
                 </p>
 
-                <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
-                    <Avatar
-                        name={author.name}
-                        picture={author.picture}
-                        size="sm"
-                    />
-                    <Likes
-                        postKey={postKey}
-                        isValidPage={false}
-                        variant="compact"
-                    />
-                </div>
+                {/* Pinned to the bottom with mt-auto so the tag rows line up
+                    across a grid of cards with different excerpt lengths.
+                    Capped at three for the same reason. */}
+                <TagList tags={tags} max={3} className="mt-auto pt-5" />
             </div>
         </article>
     );

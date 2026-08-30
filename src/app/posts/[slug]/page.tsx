@@ -5,6 +5,7 @@ import markdownToHtml from '@/lib/markdownToHtml';
 import { readingTime } from '@/lib/reading-time';
 import { extractHeadings } from '@/lib/toc';
 import { AUTHOR, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site';
+import { postTags } from '@/lib/tags';
 import Alert from '@/app/_components/alert';
 import CodeCopy from '@/app/_components/code-copy';
 import Container from '@/app/_components/container';
@@ -14,6 +15,7 @@ import ReadingProgress from '@/app/_components/reading-progress';
 import TableOfContents from '@/app/_components/table-of-contents';
 import { PostBody } from '@/app/_components/post-body';
 import { PostHeader } from '@/app/_components/post-header';
+import TagList from '@/app/_components/tag-list';
 
 export default async function Post(props: Params) {
     const params = await props.params;
@@ -24,6 +26,7 @@ export default async function Post(props: Params) {
     }
 
     const content = await markdownToHtml(post.content || '');
+    const tags = postTags(post);
     const headings = extractHeadings(content);
 
     /* Some posts open with their excerpt verbatim — showing it as a standfirst
@@ -49,6 +52,7 @@ export default async function Post(props: Params) {
         headline: post.title,
         description: post.excerpt,
         image: [absoluteUrl(post.ogImage?.url ?? post.coverImage)],
+        keywords: tags.length ? tags.join(', ') : undefined,
         datePublished: post.date,
         dateModified: post.date,
         author: {
@@ -97,8 +101,8 @@ export default async function Post(props: Params) {
                             postKey={post.postKey}
                             coverImage={post.coverImage}
                             date={post.date}
-                            author={post.author}
                             excerpt={standfirst}
+                            tags={tags}
                             minutes={readingTime(post.content || '')}
                         />
 
@@ -107,6 +111,15 @@ export default async function Post(props: Params) {
                         </div>
 
                         <footer className="mx-auto mt-16 max-w-reading border-t border-line pt-8">
+                            {tags.length > 0 && (
+                                <div className="mb-8">
+                                    <p className="mb-3 text-xs font-semibold uppercase tracking-[1.5px] text-accent">
+                                        Tagged
+                                    </p>
+                                    <TagList tags={tags} size="md" />
+                                </div>
+                            )}
+
                             <p className="mb-4 text-sm text-fg-subtle">
                                 Was this post useful?
                             </p>

@@ -9,6 +9,11 @@ author:
   picture: "/assets/blog/authors/gagan_img1.jpeg"
 ogImage:
   url: "/assets/blog/rooting-a-dead-phone-into-a-server/cover.png"
+tags:
+  - "Self-Hosting"
+  - "Android"
+  - "Termux"
+  - "Linux"
 ---
 
 ---

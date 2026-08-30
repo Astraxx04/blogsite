@@ -9,6 +9,10 @@ author:
   picture: "/assets/blog/authors/gagan_img1.jpeg"
 ogImage:
   url: "/assets/blog/dockerizing-mern/cover.png"
+tags:
+  - "Docker"
+  - "MERN"
+  - "DevOps"
 ---
 
 ---
